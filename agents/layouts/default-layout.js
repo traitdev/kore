@@ -1,5 +1,6 @@
 export default class DefaultLayout {
-  constructor () {
+  constructor (settings) {
+    this.settings = settings;
     this.appContainer = this.getAppContainer();
     this.detectScreenType();
     if (this.screen.isMobile) {
@@ -31,7 +32,7 @@ export default class DefaultLayout {
     }
   }
   
-  update() {
+  init() {
     if (this.isFullScreen()) {
       if (this.screen.isMobile) {
         this.btnReloadPage.style.visibility = 'visible';
@@ -95,7 +96,7 @@ export default class DefaultLayout {
       <div id="layout" class="layout layout-mobile">
         <header id="appHeader" class="app-header">
           <button id="btnSettings" class="material-icons">settings</button>
-          <h1>&#9679; miran &#9679;</h1>
+          <h1>&#9679; ${this.settings.appTitle} &#9679;</h1>
           <button id="btnFullScreen" class="material-icons">
             fullscreen
           </button>
@@ -108,7 +109,7 @@ export default class DefaultLayout {
           <div id="appPanel"></div>
         </div>
         <footer id="appFooter" class="app-footer">
-          <p>&#169; 2021 M.C.P.</script></p>
+          <p>&#169; 2021 ${this.settings.copyright}.</script></p>
         </footer>
       </div>
     `);
@@ -119,7 +120,7 @@ export default class DefaultLayout {
       <div id="layout" class="layout layout-desktop">
         <header id="appHeader" class="app-header">
           <button id="btnSettings" class="material-icons">settings</button>
-          <h1>&#9679; miran &#9679;</h1>
+          <h1>&#9679; ${this.settings.appTitle} &#9679;</h1>
           <button id="btnFullScreen" class="material-icons">
             fullscreen
           </button>
@@ -132,7 +133,7 @@ export default class DefaultLayout {
           <div id="appPanel"></div>
         </div>
         <footer id="appFooter" class="app-footer">
-          <p>&#169; 2021 M.C.P.</script></p>
+          <p>&#169; 2021 ${this.settings.copyright}</script></p>
         </footer>
       </div>
     `);

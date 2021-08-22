@@ -10,7 +10,7 @@ export default class KoreApp {
       this.settings = {};
     }
 
-    this.layout = settings.layout || new DefaultLayout();
+    this.layout = settings.layout || new DefaultLayout(settings);
 
     if (!settings.cachedAssetPath) {
       this.settings.cachedAssetPath = 'assets';
