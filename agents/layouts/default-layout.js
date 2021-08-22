@@ -116,10 +116,6 @@ body {
   color: ${colors.dark};
   background-color: ${colors.light};
 }
-* {
-  color: ${colors.darker};
-}
-
 button {
   background-color: ${colors.darker};
   color: ${colors.light};
@@ -179,6 +175,7 @@ label.toggle-side input:checked + .slider:before {
 }
 footer.app-footer {
   background-color: ${colors.darker};
+  color: ${colors.lighter};
 }
 #app-container {
   background-color: ${colors.medium};
