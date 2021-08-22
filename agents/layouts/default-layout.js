@@ -33,6 +33,7 @@ export default class DefaultLayout {
   }
   
   init() {
+    this.loadTheme();
     if (this.isFullScreen()) {
       if (this.screen.isMobile) {
         this.btnReloadPage.style.visibility = 'visible';
@@ -46,6 +47,168 @@ export default class DefaultLayout {
     this.layoutElement.style.animation = 'fadeIn 2s';
     this.layoutElement.style.opacity = 1;
     this.layoutElement.style.visibility = 'visible';
+  }
+
+  loadTheme() {
+    const theme = this.settings.theme;
+    const colors = theme.colors;
+    var css = `
+      <style>
+.bg1 {
+  background-color: ${colors.primary};
+}
+.bg2 {
+  background-color: ${colors.secondary};
+}
+.bgh {
+  background-color: ${colors.highlight};
+}
+.bgdark {
+  background-color: ${colors.dark};
+}
+.bgdarker {
+  background-color: ${colors.darker};
+}
+.bgmedium {
+  background-color: ${colors.medium};
+}
+.bglighter {
+  background-color: ${colors.lighter};
+}
+.bglight {
+  background-color: ${colors.light};
+}
+.fg1 {
+  color: ${colors.primary};
+}
+.fg2 {
+  color: ${colors.secondary};
+}
+.fgh {
+  color: ${colors.highlight};
+}
+.fgdark {
+  color: ${colors.dark};
+}
+.fgdarker {
+  color: ${colors.darker};
+}
+.fgmedium {
+  color: ${colors.medium};
+}
+.fglighter {
+  color: ${colors.lighter};
+}
+.fglight {
+  color: ${colors.light};
+}
+
+.overlay {
+  background: ${colors.darker};
+}
+div.rotate-overlay {
+  background: ${colors.darker};
+}
+div.rotate-overlay .large-icon {
+  background: ${colors.dark};
+}
+body {
+  color: ${colors.dark};
+  background-color: ${colors.light};
+}
+* {
+  color: ${colors.darker};
+}
+
+button {
+  background-color: ${colors.darker};
+  color: ${colors.light};
+}
+button:hover {
+  background-color: ${colors.highlight};
+  color: ${colors.darker};
+  cursor: pointer;
+}
+button:disabled {
+  background-color: ${colors.medium};
+  color: ${colors.lighter};
+  cursor: default;
+}
+input {
+  background-color: ${colors.light};
+  border: 0.1em solid ${colors.dark};
+}
+input[type="text"], textarea {
+  border: 0.1em solid ${colors.dark};
+  background: ${colors.light};
+  color: ${colors.dark};
+}
+input[type="text"]:hover {
+  border: 0.1em solid ${colors.medium};
+}
+input[type="text"]:focus, input[type="text"]:hover + input[type="text"]:focus {
+  border: 0.1em solid ${colors.highlight};
+}
+input[type="range"] {
+  background: ${colors.medium};
+}
+input[type="range"]::-webkit-slider-thumb {
+  background: ${colors.dark};
+}
+.slider {
+  background-color: ${colors.medium};
+}
+.slider:before {
+  background-color: ${colors.dark};
+}
+input:checked + .slider {
+  background-color: ${colors.highlight};
+}
+input:focus + .slider {
+  box-shadow: 0 0 1px ${colors.highlight};
+}
+
+label.toggle-side input:checked + .slider {
+  background-color: ${colors.medium};
+}
+label.toggle-side .slider:before {
+  background-color: ${colors.light};
+}
+label.toggle-side input:checked + .slider:before {
+  background-color: ${colors.dark};;
+}
+footer.app-footer {
+  background-color: ${colors.darker};
+}
+#app-container {
+  background-color: ${colors.medium};
+}
+input {
+  background-color: ${colors.darker};
+}
+button.nav-button > span {
+  color: ${colors.darker};
+}
+#appHeader {
+  background-color: ${colors.primary};
+}
+#appHeader button {
+  background-color: ${colors.dark};
+}
+#appHeader button:hover {
+  background-color: ${colors.medium};
+}
+#appHeader h1 {
+  font-size: 2rem;
+  color: ${colors.dark};
+}
+.sidenav {
+  background-color: ${colors.lighter};
+}
+
+      </style>
+    `;
+    document.head.appendChild(this.htmlToElement(css));
   }
 
   htmlToElement(html) {
@@ -96,7 +259,7 @@ export default class DefaultLayout {
       <div id="layout" class="layout layout-mobile">
         <header id="appHeader" class="app-header">
           <button id="btnSettings" class="material-icons">settings</button>
-          <h1>&#9679; ${this.settings.appTitle} &#9679;</h1>
+          <h1>${this.settings.appTitle}</h1>
           <button id="btnFullScreen" class="material-icons">
             fullscreen
           </button>
@@ -120,7 +283,7 @@ export default class DefaultLayout {
       <div id="layout" class="layout layout-desktop">
         <header id="appHeader" class="app-header">
           <button id="btnSettings" class="material-icons">settings</button>
-          <h1>&#9679; ${this.settings.appTitle} &#9679;</h1>
+          <h1>${this.settings.appTitle}</h1>
           <button id="btnFullScreen" class="material-icons">
             fullscreen
           </button>
