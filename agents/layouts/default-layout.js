@@ -193,7 +193,7 @@ button.nav-button > span {
   background-color: ${colors.dark};
 }
 #appHeader button:hover {
-  background-color: ${colors.medium};
+  background-color: ${colors.highlight};
 }
 #appHeader h1 {
   font-size: 2rem;
