@@ -32,7 +32,7 @@ export default class DefaultLayout {
     }
   }
   
-  init() {
+  refresh() {
     this.loadTheme();
     if (this.isFullScreen()) {
       if (this.screen.isMobile) {
