@@ -133,6 +133,10 @@ export default class KoreApp {
       }
     });
     if (!handled) {
+      if (e.type == 'resize') {
+        this.layout.refresh();
+        this.updateCanvasDimensions();
+      }
       if (e.type == 'keydown') {
         if (e.key == 'Space') {
           this.state.showMeter = !this.state.showMeter;
