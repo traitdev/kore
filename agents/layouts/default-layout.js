@@ -1,5 +1,7 @@
 export default class DefaultLayout {
-  constructor (settings) {
+  constructor (app, settings) {
+    this.app = app;
+    this.themeLoaded = false;
     this.settings = settings;
     this.appContainer = this.getAppContainer();
     this.detectScreenType();
@@ -26,6 +28,8 @@ export default class DefaultLayout {
       } else if (le.webkitRequestFullscreen) { /* Safari */
         le.webkitRequestFullscreen();
       }
+      this.app.refillBackground = true;
+      this.app.renderFlag = true;
     }
     this.btnReloadPage.onclick = () => {
       window.location.reload();
@@ -47,10 +51,14 @@ export default class DefaultLayout {
     this.layoutElement.style.animation = 'fadeIn 2s';
     this.layoutElement.style.opacity = 1;
     this.layoutElement.style.visibility = 'visible';
+    this.app.refillBackground = true;
+    this.app.renderFlag = true;
   }
 
   loadTheme() {
+    if (this.themeLoaded) return;
     const theme = this.settings.theme;
+    const darkMode = theme.darkMode;
     const colors = theme.colors;
     var css = `
       <style>
@@ -64,7 +72,7 @@ export default class DefaultLayout {
   background-color: ${colors.highlight};
 }
 .bgdark {
-  background-color: ${colors.dark};
+  background-color: ${darkMode ? colors.light : colors.dark};
 }
 .bgdarker {
   background-color: ${colors.darker};
@@ -76,7 +84,7 @@ export default class DefaultLayout {
   background-color: ${colors.lighter};
 }
 .bglight {
-  background-color: ${colors.light};
+  background-color: ${darkMode ? colors.dark : colors.light};
 }
 .fg1 {
   color: ${colors.primary};
@@ -88,7 +96,7 @@ export default class DefaultLayout {
   color: ${colors.highlight};
 }
 .fgdark {
-  color: ${colors.dark};
+  color: ${darkMode ? colors.light : colors.dark};
 }
 .fgdarker {
   color: ${colors.darker};
@@ -100,9 +108,8 @@ export default class DefaultLayout {
   color: ${colors.lighter};
 }
 .fglight {
-  color: ${colors.light};
+  color: ${darkMode ? colors.dark : colors.light};
 }
-
 .overlay {
   background: ${colors.darker};
 }
@@ -113,8 +120,14 @@ div.rotate-overlay .large-icon {
   background: ${colors.dark};
 }
 body {
-  color: ${colors.dark};
-  background-color: ${colors.light};
+  color: ${darkMode ? colors.light : colors.dark};
+  background-color: ${darkMode ? colors.dark : colors.light};
+}
+:not(:root):fullscreen::backdrop {
+  background-color: ${darkMode ? colors.dark : colors.light};
+}
+*:fullscreen, *:-webkit-full-screen, *:-moz-full-screen {
+  background-color: ${darkMode ? colors.dark : colors.light};
 }
 button {
   background-color: ${colors.darker};
@@ -174,11 +187,11 @@ label.toggle-side input:checked + .slider:before {
   background-color: ${colors.dark};;
 }
 footer.app-footer {
-  background-color: ${colors.darker};
+  background-color: ${colors.medium};
   color: ${colors.lighter};
 }
 #app-container {
-  background-color: ${colors.medium};
+  background-color: ${darkMode ? colors.dark : colors.light};
 }
 input {
   background-color: ${colors.darker};
@@ -196,16 +209,15 @@ button.nav-button > span {
   background-color: ${colors.highlight};
 }
 #appHeader h1 {
-  font-size: 2rem;
-  color: ${colors.dark};
+  color: ${colors.primaryText};
 }
 .sidenav {
   background-color: ${colors.lighter};
 }
-
       </style>
     `;
     document.head.appendChild(this.htmlToElement(css));
+    this.themeLoaded = true;
   }
 
   htmlToElement(html) {

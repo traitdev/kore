@@ -3,14 +3,15 @@ import DefaultLayout from "./layouts/default-layout.js";
 export default class KoreApp {
   constructor (settings) {
     this.settings = settings;
-    
+    this.canvasFill = settings.theme.darkMode ? settings.theme.colors.dark : settings.theme.colors.light;
+    this.refillBackground = true;
     document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
     
     if (!settings) {
       this.settings = {};
     }
 
-    this.layout = settings.layout || new DefaultLayout(settings);
+    this.layout = settings.layout || new DefaultLayout(this, settings);
 
     if (!settings.cachedAssetPath) {
       this.settings.cachedAssetPath = 'assets';
@@ -89,7 +90,7 @@ export default class KoreApp {
     window.requestAnimationFrame(this.loop.bind(this));
     setInterval(() => {
       this.update(0);
-    }, 50);
+    }, 30);
     canvas.addEventListener('touchstart', (e) => this.handleEvent(e), { passive: true });
     canvas.addEventListener("touchend", (e) => this.handleEvent(e));
     canvas.addEventListener("touchmove", (e) => this.handleEvent(e), { passive: true });
@@ -105,25 +106,45 @@ export default class KoreApp {
     canvas.addEventListener('mousedown', (e) => this.handleEvent(e));
     canvas.addEventListener('contextmenu', (e) => this.handleEvent(e));
     canvas.addEventListener('wheel', (e) => this.handleEvent(e), { passive: true });
-    canvas.addEventListener('keydown', (e) => this.handleEvent(e));
+    document.addEventListener('keydown', (e) => this.handleEvent(e));
   }
 
   handleEvent(e) {
+    //console.log(e);
     this.renderFlag = true;
     const { canvas } = this.props;
     const rect = canvas.getBoundingClientRect();
-    if (e.clientY) {
+    if (!this.mouse) {
       this.mouse = {
-        clientX: e.clientX - rect.x,
-        clientY: e.clientY - rect.y,
+        clientX: 0,
+        clientY: 0,
+        movementX: 0,
+        movementY: 0,
+      }
+    }
+    if (e.clientY) {
+      this.mouse.clientX = e.clientX - rect.x;
+      this.mouse.clientY = e.clientY - rect.y;
+      if (e.type == 'mousemove') {
+        this.mouse.movementX = e.movementX * 1.0;
+        this.mouse.movementY = e.movementY * 1.0;
       }
     }
     if (e.touches && e.touches.length > 0) {
-      this.mouse = {
-        clientX: e.touches[0].clientX - rect.x,
-        clientY: e.touches[0].clientY - rect.y,
+      const oldX = this.mouse.clientX;
+      const oldY = this.mouse.clientY;
+      this.mouse.clientX = e.touches[0].clientX - rect.x;
+      this.mouse.clientY = e.touches[0].clientY - rect.y;
+      this.mouse.movementX = (this.mouse.clientX - oldX) * 1.0;
+      this.mouse.movementY = (this.mouse.clientY - oldY) * 1.0;
+      if (Math.abs(this.mouse.movementX) > 100) {
+        this.mouse.movementX = 0;
+      }
+      if (Math.abs(this.mouse.movementY) > 100) {
+        this.mouse.movementY = 0;
       }
     }
+    
     var handled = false;
     this.state.layers.forEach((layer) => {
       if (!handled && layer.handleEvent) {
@@ -153,7 +174,12 @@ export default class KoreApp {
     const elm = document.querySelectorAll('#appPanel, #appHeader, #appFooter');
     const dh = Array.prototype.slice.call(elm).map(a => a.clientHeight).reduce((a,b) => a + b);
     const w = this.layout.appContainer.clientWidth;
-    const h = 0.8 * (this.layout.appContainer.clientHeight - dh);
+    const h = (this.layout.appContainer.clientHeight - dh);
+
+    if (this.settings.view.maximized) {
+      return { x: 0, y: 0, w: w, h: h };
+    }
+
     const maxDim = Math.min(w, h);
     const dim = Math.floor(maxDim / 8) * 8;
     return { x: 0, y: 0, w: dim, h: dim };
@@ -166,7 +192,6 @@ export default class KoreApp {
     this.viewPort = this.getKoreAppViewport();
     if (!this.props.canvas) {
         var newCanvas = document.createElement('canvas');
-        newCanvas.style.background = 'black';
         this.props.container.appendChild(newCanvas);
         this.props.canvas = newCanvas;
     }
@@ -180,6 +205,7 @@ export default class KoreApp {
       canvas.height = this.viewPort.h;
       container.style.height = this.viewPort.h;
     }
+    this.refillBackground = true;
   }
 
   update(progress) {
@@ -205,9 +231,13 @@ export default class KoreApp {
     const { showMeter, meter } = this.state;
     var ctx = canvas.getContext("2d");
     ctx.save();
-    ctx.strokeStyle = '#fff';
-    ctx.fillStyle = '#888';
-    ctx.clearRect(0,0, canvas.width, canvas.height);
+    ctx.fillStyle = this.canvasFill;
+    if (this.refillBackground) {
+      ctx.fillStyle = this.canvasFill;
+      ctx.fillRect(0,0, canvas.width, canvas.height);
+    } else {
+      ctx.clearRect(0,0, canvas.width, canvas.height);
+    }
 
     //console.log('drawing')
     this.state.layers.forEach((layer) => {
@@ -217,6 +247,8 @@ export default class KoreApp {
       }
       ctx.restore();
     });
+
+    
 
     if (this.mouse && false) {
       ctx.beginPath();
@@ -230,6 +262,7 @@ export default class KoreApp {
     //tx.closePath();
     // if (showMeter) meter.render(canvas, ctx, progress);
     ctx.restore();
+    this.refillBackground = false;
   }
 
   loop(timestamp) {
