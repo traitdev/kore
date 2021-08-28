@@ -115,6 +115,7 @@ export default class DefaultLayout {
 }
 div.rotate-overlay {
   background: ${colors.darker};
+  border: 0.3rem solid ${colors.light};
 }
 div.rotate-overlay .large-icon {
   background: ${colors.dark};
@@ -130,7 +131,7 @@ body {
   background-color: ${darkMode ? colors.dark : colors.light};
 }
 button {
-  background-color: ${colors.darker};
+  background-color: ${colors.secondary};
   color: ${colors.light};
 }
 button:hover {
@@ -167,18 +168,20 @@ input[type="range"]::-webkit-slider-thumb {
 .slider {
   background-color: ${colors.medium};
 }
+.slider:hover {
+  background-color: ${colors.highlight};
+}
 .slider:before {
   background-color: ${colors.dark};
 }
 input:checked + .slider {
+  background-color: ${colors.secondary};
+}
+input:checked + .slider:hover {
   background-color: ${colors.highlight};
 }
 input:focus + .slider {
   box-shadow: 0 0 1px ${colors.highlight};
-}
-
-label.toggle-side input:checked + .slider {
-  background-color: ${colors.medium};
 }
 label.toggle-side .slider:before {
   background-color: ${colors.light};
@@ -197,6 +200,11 @@ input {
   background-color: ${colors.darker};
 }
 button.nav-button > span {
+  color:  ${darkMode ? colors.light : colors.dark};
+  text-shadow: -0.1rem -0.2rem 0 ${colors.secondary},  0.1rem -0.2rem 0 ${colors.secondary};
+}
+button.nav-button:hover > span {
+  text-shadow: -0.1rem -0.2rem 0 ${colors.highlight},  0.1rem -0.2rem 0 ${colors.highlight};
   color: ${colors.darker};
 }
 #appHeader {
@@ -268,6 +276,7 @@ button.nav-button > span {
       <div id="layout" class="layout layout-mobile">
         <header id="appHeader" class="app-header">
           <button id="btnSettings" class="material-icons">settings</button>
+          <button id="btnConnect" class="material-icons">person</button>
           <h1>${this.settings.appTitle}</h1>
           <button id="btnFullScreen" class="material-icons">
             fullscreen
@@ -292,6 +301,7 @@ button.nav-button > span {
       <div id="layout" class="layout layout-desktop">
         <header id="appHeader" class="app-header">
           <button id="btnSettings" class="material-icons">settings</button>
+          <button id="btnConnect" class="material-icons">person</button>
           <h1>${this.settings.appTitle}</h1>
           <button id="btnFullScreen" class="material-icons">
             fullscreen
